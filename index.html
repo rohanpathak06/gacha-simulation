@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gacha Probability Demonstrator</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/style.css">
+  </head>
+  <body>
+    <div id="app">
+      <header class="app-header">
+        <div class="header-content">
+          <h1>Gacha<span class="highlight">Lab</span></h1>
+          <p class="subtitle">Understand the math behind the pull.</p>
+        </div>
+        <div class="header-controls">
+           <select id="preset-select" class="preset-select">
+             <option value="STANDARD">Standard Game</option>
+             <option value="GENEROUS">Generous Game</option>
+             <option value="PREDATORY">Predatory Game</option>
+           </select>
+           <button id="reset-btn" class="btn btn-danger small">Reset</button>
+           <div class="setting-toggle">
+              <label for="sound-toggle">Sound</label>
+              <input type="checkbox" id="sound-toggle" checked>
+           </div>
+           <div class="setting-toggle">
+              <label for="speed-toggle">Fast</label>
+              <input type="checkbox" id="speed-toggle">
+           </div>
+        </div>
+      </header>
+
+      <main>
+        <!-- The Gacha Stage: Where visuals happen -->
+        <section class="gacha-stage">
+          <div class="capsule-container" id="capsule-container">
+            <div class="gacha-box" id="gacha-box">
+              <div class="box-lid"></div>
+              <div class="box-body">
+                <span class="box-label">PULL</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="pull-controls">
+            <button id="pull-1" class="btn btn-primary">
+              <span class="btn-text">Pull 1</span>
+              <span class="btn-cost">100 Gems</span>
+            </button>
+            <button id="pull-10" class="btn btn-special">
+              <span class="btn-text">Pull 10</span>
+              <span class="btn-cost">1000 Gems</span>
+            </button>
+          </div>
+          
+          <div class="last-pull-results" id="results-area">
+             <div class="placeholder-text">Press a button to pull!</div>
+          </div>
+        </section>
+
+        <!-- The Dashboard: Stats and Reality -->
+        <section class="stats-dashboard">
+          <div class="stats-header">
+            <h2>Statistics & Probability</h2>
+            <div class="stats-summary" id="stats-summary">
+               <span>Total Pulls: <strong id="total-pulls">0</strong></span>
+               <span>Virtual Cost: <strong id="total-cost">$0</strong></span>
+            </div>
+          </div>
+
+          <div class="stats-grid" id="stats-grid">
+            <!-- Rarity Cards injected by JS -->
+          </div>
+
+          <!-- Educational Context -->
+          <div class="educational-panel">
+             <div class="chart-container" id="chart-container">
+                <h3>Expected vs Realized (Top Tiers)</h3>
+                <div class="bar-chart" id="bar-chart"></div>
+             </div>
+             
+             <div class="calculator-panel">
+               <div class="lesson-card">
+                 <h3>Gambler's Fallacy</h3>
+                 <p>Previous failures do NOT increase your odds for the next pull (unless hard pity is triggered).</p>
+                 <div id="pity-status" class="pity-status">Pity Status: <span id="pity-count-display">0</span>/90</div>
+               </div>
+               
+               <div class="prob-calculator lesson-card" style="margin-top: 1rem;">
+                 <h3>Probability Calculator</h3>
+                 <p>Pulls needed for <span class="highlight">50%</span> chance of <span class="highlight">Legendary</span>:</p>
+                 <div class="calc-result" id="calc-result-display">--</div>
+                 <div class="calc-controls">
+                   <select id="calc-rarity">
+                     <option value="rare">Rare</option>
+                     <option value="epic">Epic</option>
+                     <option value="legendary" selected>Legendary</option>
+                     <option value="mythic">Mythic</option>
+                   </select>
+                   <select id="calc-prob">
+                     <option value="50">50%</option>
+                     <option value="90">90%</option>
+                     <option value="99">99%</option>
+                   </select>
+                 </div>
+               </div>
+             </div>
+          </div>
+        </section>
+      </main>
+      
+      <footer>
+        <p>Gacha Probability Demonstrator - For Educational Purposes Only. Do not gamble with real money.</p>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
