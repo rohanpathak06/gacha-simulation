@@ -1,9 +1,20 @@
 import { CONFIG, PITY_CONFIG } from '../data/Config.js';
 
+/**
+ * State manager and core logic engine for the gacha simulator.
+ * Handles PRNG rolling, pity accumulation, probability enforcement,
+ * and persistent local application state.
+ */
 export class GachaSystem {
+    /**
+     * Initializes the GachaSystem and attempts to restore historical state from Storage.
+     */
     constructor() {
+        /** @type {Array<Object>} List of all historical pulls */
         this.history = [];
+        /** @type {number} Total number of standard rolls executed */
         this.pullCount = 0;
+        /** @type {{epic: number, legendary: number}} Tracking counters for soft/hard pity */
         this.pityCounter = {
             epic: 0,
             legendary: 0
@@ -25,6 +36,11 @@ export class GachaSystem {
         return Object.values(CONFIG.current).sort((a, b) => a.rate - b.rate);
     }
 
+    /**
+     * Generates a single item roll, strictly evaluating hard/soft pity rules
+     * before delegating to standard probability cumulative checks.
+     * @returns {Object} The drawn item object.
+     */
     roll() {
         // 1. Check Hard Pity (Legendary)
         // Only applies if Legendary exists in current preset (it does in all our presets)
@@ -82,13 +98,17 @@ export class GachaSystem {
         if (tier === 'epic') this.pityCounter.epic = 0;
     }
 
+    /**
+     * Executes a batch of pulls (or single), updating total analytics.
+     * @param {number} [amount=1] Number of items to pull simultaneously.
+     * @returns {Array<Object>} Array containing the detailed results of the pull attempt.
+     */
     pull(amount = 1) {
         const results = [];
         for (let i = 0; i < amount; i++) {
             const item = this.roll();
             const result = {
                 ...item, // Copies name, id, color
-                // We should snapshot the rate too for educational analysis later?
                 droppedAtRate: item.rate,
                 timestamp: Date.now(),
                 pullIndex: this.pullCount + i + 1,
@@ -108,16 +128,23 @@ export class GachaSystem {
         this.history.push(...newItems);
     }
 
+    /**
+     * Serializes current analytics to localStorage.
+     * Limits history queue to 500 records to prevent QuotaExceeded errors during heavy operation.
+     */
     saveState() {
         const state = {
             pullCount: this.pullCount,
             pityCounter: this.pityCounter
         };
         localStorage.setItem('gacha_state', JSON.stringify(state));
+        
         try {
-            localStorage.setItem('gacha_history', JSON.stringify(this.history));
+            // Keep at most the last 500 items to avoid running out of storage
+            const historyToSave = this.history.slice(-500);
+            localStorage.setItem('gacha_history', JSON.stringify(historyToSave));
         } catch (e) {
-            console.warn('History too big');
+            console.warn('History memory limit approached', e);
         }
     }
 
@@ -134,6 +161,9 @@ export class GachaSystem {
         }
     }
 
+    /**
+     * Purges all application statistics and removes them from the client browser completely.
+     */
     reset() {
         this.history = [];
         this.pullCount = 0;
