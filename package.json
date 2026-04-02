@@ -1,8 +1,18 @@
 {
-  "name": "gacha",
+  "name": "gacha-simulator",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "A quiet, premium gacha probability simulator structured as an analytical dashboard.",
+  "author": "Rohan Pathak",
+  "license": "MIT",
   "type": "module",
+  "keywords": [
+    "gacha",
+    "simulator",
+    "probability",
+    "vanilla-js",
+    "dashboard"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",

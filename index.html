@@ -2,122 +2,187 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gacha Probability Demonstrator</title>
-    <!-- Google Fonts -->
+    <title>Gacha Simulator — Probability Dashboard</title>
+    <meta name="description" content="A quiet, premium gacha probability simulator. Understand pull mechanics, pity systems, and drop rates through a thoughtfully engineered dashboard." />
+    <!-- Google Fonts — DM Sans (Geist fallback) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/style.css">
   </head>
   <body>
     <div id="app">
-      <header class="app-header">
-        <div class="header-content">
-          <h1>Gacha<span class="highlight">Lab</span></h1>
-          <p class="subtitle">Understand the math behind the pull.</p>
-        </div>
+
+      <!-- ═══ HEADER BAR ═══ -->
+      <header class="app-header" id="app-header">
+        <span class="header-title">Gacha Simulator</span>
         <div class="header-controls">
-           <select id="preset-select" class="preset-select">
-             <option value="STANDARD">Standard Game</option>
-             <option value="GENEROUS">Generous Game</option>
-             <option value="PREDATORY">Predatory Game</option>
-           </select>
-           <button id="reset-btn" class="btn btn-danger small">Reset</button>
-           <div class="setting-toggle">
-              <label for="sound-toggle">Sound</label>
-              <input type="checkbox" id="sound-toggle" checked>
-           </div>
-           <div class="setting-toggle">
-              <label for="speed-toggle">Fast</label>
-              <input type="checkbox" id="speed-toggle">
-           </div>
+          <button class="ghost-btn" id="manual-btn">Manual</button>
+          <button class="ghost-btn" id="reset-btn">Reset</button>
+          <button class="ghost-btn" id="settings-btn">Settings</button>
         </div>
       </header>
 
-      <main>
-        <!-- The Gacha Stage: Where visuals happen -->
-        <section class="gacha-stage">
-          <div class="capsule-container" id="capsule-container">
-            <div class="gacha-box" id="gacha-box">
-              <div class="box-lid"></div>
-              <div class="box-body">
-                <span class="box-label">PULL</span>
+      <!-- ═══ USER MANUAL OVERLAY ═══ -->
+      <div class="onboarding-overlay hidden" id="onboarding-overlay">
+        <div class="onboarding-modal">
+          <div class="onboarding-header">
+            <span class="card-label">How It Works</span>
+          </div>
+          <div class="onboarding-body">
+            <div class="onboarding-section">
+              <h3 class="onboarding-title">Rarity Tiers</h3>
+              <div class="onboarding-tiers">
+                <div class="onboarding-tier">
+                  <span class="rarity-pill" data-rarity="5">5★</span>
+                  <span>Legendary &amp; Mythic — rarest drops</span>
+                </div>
+                <div class="onboarding-tier">
+                  <span class="rarity-pill" data-rarity="4">4★</span>
+                  <span>Epic &amp; Rare — uncommon finds</span>
+                </div>
+                <div class="onboarding-tier">
+                  <span class="rarity-pill" data-rarity="3">3★</span>
+                  <span>Common &amp; Uncommon — standard pulls</span>
+                </div>
+              </div>
+            </div>
+            <div class="onboarding-divider"></div>
+            <div class="onboarding-section">
+              <h3 class="onboarding-title">Pity System</h3>
+              <p class="onboarding-text">Every pull without a 5★ increases your pity counter. Once you reach <strong>90 pulls</strong>, a 5★ is guaranteed. Soft pity starts at <strong>74 pulls</strong>, gradually raising your odds.</p>
+            </div>
+            <div class="onboarding-divider"></div>
+            <div class="onboarding-section">
+              <h3 class="onboarding-title">Controls</h3>
+              <div class="onboarding-controls-list">
+                <div class="onboarding-control">
+                  <span class="onboarding-key">Pull ×1</span>
+                  <span>Single pull — one item at a time</span>
+                </div>
+                <div class="onboarding-control">
+                  <span class="onboarding-key">Pull ×10</span>
+                  <span>Multi-pull — ten items at once</span>
+                </div>
+                <div class="onboarding-control">
+                  <span class="onboarding-key">Reset</span>
+                  <span>Clears all history and starts fresh</span>
+                </div>
               </div>
             </div>
           </div>
-          
-          <div class="pull-controls">
-            <button id="pull-1" class="btn btn-primary">
-              <span class="btn-text">Pull 1</span>
-              <span class="btn-cost">100 Gems</span>
-            </button>
-            <button id="pull-10" class="btn btn-special">
-              <span class="btn-text">Pull 10</span>
-              <span class="btn-cost">1000 Gems</span>
-            </button>
+          <div class="onboarding-footer">
+            <button class="pull-btn" id="onboarding-dismiss">GOT IT</button>
           </div>
-          
-          <div class="last-pull-results" id="results-area">
-             <div class="placeholder-text">Press a button to pull!</div>
-          </div>
-        </section>
+        </div>
+      </div>
 
-        <!-- The Dashboard: Stats and Reality -->
-        <section class="stats-dashboard">
-          <div class="stats-header">
-            <h2>Statistics & Probability</h2>
-            <div class="stats-summary" id="stats-summary">
-               <span>Total Pulls: <strong id="total-pulls">0</strong></span>
-               <span>Virtual Cost: <strong id="total-cost">$0</strong></span>
+      <!-- ═══ HERO SECTION ═══ -->
+      <section class="hero-section">
+        <h1 class="hero-title">Gacha Machine Simulator</h1>
+        <p class="hero-subtitle">An analytical dashboard visualizing gacha drop mechanics, soft pity acceleration, and deterministic pull guarantees.</p>
+      </section>
+
+      <!-- ═══ BENTO GRID ═══ -->
+      <main class="bento-grid">
+
+        <!-- GACHA MACHINE VIEWPORT (main card) -->
+        <section class="machine-card card" id="machine-card">
+          <div class="card-header">
+            <span class="card-label">Machine</span>
+          </div>
+          <div class="card-body">
+            <div class="machine-graphic">
+              <div class="machine-body-shape">
+                <div class="machine-slot"></div>
+              </div>
+              <div class="machine-crank"></div>
+            </div>
+            <div class="capsule" id="capsule">
+              <div class="capsule-inner"></div>
             </div>
           </div>
-
-          <div class="stats-grid" id="stats-grid">
-            <!-- Rarity Cards injected by JS -->
-          </div>
-
-          <!-- Educational Context -->
-          <div class="educational-panel">
-             <div class="chart-container" id="chart-container">
-                <h3>Expected vs Realized (Top Tiers)</h3>
-                <div class="bar-chart" id="bar-chart"></div>
-             </div>
-             
-             <div class="calculator-panel">
-               <div class="lesson-card">
-                 <h3>Gambler's Fallacy</h3>
-                 <p>Previous failures do NOT increase your odds for the next pull (unless hard pity is triggered).</p>
-                 <div id="pity-status" class="pity-status">Pity Status: <span id="pity-count-display">0</span>/90</div>
-               </div>
-               
-               <div class="prob-calculator lesson-card" style="margin-top: 1rem;">
-                 <h3>Probability Calculator</h3>
-                 <p>Pulls needed for <span class="highlight">50%</span> chance of <span class="highlight">Legendary</span>:</p>
-                 <div class="calc-result" id="calc-result-display">--</div>
-                 <div class="calc-controls">
-                   <select id="calc-rarity">
-                     <option value="rare">Rare</option>
-                     <option value="epic">Epic</option>
-                     <option value="legendary" selected>Legendary</option>
-                     <option value="mythic">Mythic</option>
-                   </select>
-                   <select id="calc-prob">
-                     <option value="50">50%</option>
-                     <option value="90">90%</option>
-                     <option value="99">99%</option>
-                   </select>
-                 </div>
-               </div>
-             </div>
-          </div>
         </section>
+
+        <!-- STATS CARDS (2×2 bento) -->
+        <div class="stats-area" id="stats-area">
+          <div class="stat-card" id="stat-total-pulls">
+            <div class="stat-label">Total Pulls</div>
+            <div class="stat-number" id="total-pulls-num">0</div>
+          </div>
+          <div class="stat-card pity-normal" id="stat-pity-count">
+            <div class="stat-label">Pity Count</div>
+            <div class="stat-number" id="pity-count-num">0</div>
+          </div>
+          <div class="stat-card" id="stat-5star-count">
+            <div class="stat-label">5★ Count</div>
+            <div class="stat-number" id="five-star-num">0</div>
+          </div>
+          <div class="stat-card" id="stat-4star-count">
+            <div class="stat-label">4★ Count</div>
+            <div class="stat-number" id="four-star-num">0</div>
+          </div>
+        </div>
+
+        <!-- PULL BUTTON AREA -->
+        <div class="pull-area" id="pull-area">
+          <div class="pull-buttons">
+            <button class="pull-btn" id="pull-1">PULL ×1</button>
+            <button class="pull-btn" id="pull-10">PULL ×10</button>
+          </div>
+          <span class="pull-hint">Soft pity begins at 74 · Hard pity at 90</span>
+        </div>
+
+        <!-- PITY TRACKER CARD -->
+        <div class="pity-card" id="pity-card">
+          <span class="card-label">Pity</span>
+          <div class="pity-number" id="pity-number">0</div>
+          <div class="pity-bar-container">
+            <div class="pity-bar-track">
+              <div class="pity-bar-fill" id="pity-bar-fill"></div>
+            </div>
+            <div class="pity-bar-labels">
+              <span>0</span>
+              <span>90</span>
+            </div>
+          </div>
+          <div class="pity-guaranteed hidden" id="pity-guaranteed">
+            <span class="guaranteed-pill">Guaranteed Next</span>
+          </div>
+        </div>
+
+        <!-- LAST PULL RESULT CARD -->
+        <div class="last-pull-card" id="last-pull-card">
+          <span class="latest-tag">Latest</span>
+          <div class="last-pull-body" id="last-pull-body">
+            <div class="last-pull-empty">
+              <span class="em-dash">—</span>
+              No pulls yet
+            </div>
+          </div>
+        </div>
+
+        <!-- PULL HISTORY TABLE -->
+        <section class="history-section" id="history-section">
+          <div class="history-header-bar">
+            <span class="card-label">Pull History</span>
+          </div>
+          <div class="history-table" id="history-table">
+            <div class="history-row history-row--header">
+              <span class="history-cell">#</span>
+              <span class="history-cell">Item</span>
+              <span class="history-cell">Rarity</span>
+              <span class="history-cell">Pity</span>
+              <span class="history-cell">Time</span>
+            </div>
+            <div class="history-empty" id="history-empty">Pull to see history</div>
+          </div>
+          <button class="history-show-all hidden" id="history-show-all">Show all</button>
+        </section>
+
       </main>
-      
-      <footer>
-        <p>Gacha Probability Demonstrator - For Educational Purposes Only. Do not gamble with real money.</p>
-      </footer>
+
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>
