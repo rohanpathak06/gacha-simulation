@@ -1,51 +1,19 @@
 Gacha Simulation
 
-A simple gacha (random character draw) simulation application that demonstrates probability-based item/character pulling similar to gacha games.
+A probability-based gacha simulation application that mimics the random character/item pull mechanics used in gacha games. The project demonstrates random number generation, probability distribution, and basic simulation logic used in modern game reward systems.
 
 Overview
 
-This project simulates a gacha system where users can perform pulls to obtain random characters or items based on predefined probability rates. It is built to demonstrate randomization, probability distribution, and basic application structure.
+This application simulates a gacha system where users can perform pulls to receive items of different rarity levels based on predefined probability rates. The project is built to understand weighted random selection, rarity distribution, and simulation logic.
 
 Features
-Random gacha pulls
-Probability-based character/item drops
-Simple user interface
-Pull history tracking
-Basic simulation of gacha mechanics
+Random gacha pull system
+Probability-based rarity drops
+Multiple item rarity levels
+Pull simulation
+Simple and clean UI
+Probability logic implementation
 Tech Stack
-Frontend: (Add what you used — React / HTML / CSS / Next.js)
-Backend: (Add if any — Node.js / Express)
-Database: (If used — MongoDB / Prisma / etc.)
-Installation
-
-Clone the repository:
-
-git clone https://github.com/your-username/gacha.git
-cd gacha
-
-Install dependencies:
-
-npm install
-
-Run the project:
-
-npm run dev
-How Gacha Probability Works
-
-Each pull generates a random number and maps it to an item based on probability ranges. Higher rarity items have lower probability, making them harder to obtain.
-
-Example probability distribution:
-
-Common: 60%
-Rare: 25%
-Epic: 10%
-Legendary: 5%
-Future Improvements
-Pity system
-Inventory system
-User accounts
-Animation for pulls
-Statistics dashboard
-License
-
-This project is for educational purposes.
+Frontend: React 
+Backend: Node.js
+Language: JavaScript / TypeScript
